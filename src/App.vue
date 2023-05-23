@@ -18,13 +18,15 @@
       <button v-if="!this.answerSubmitted" @click="this.submitAnswer()" class="send" type="button">Confirmar</button>
 
       <section class="result" v-if="this.answerSubmitted">
-        <h4 v-if="this.chosenAnswer == this.correctAnswer">
-          &#9989; Parabéns, a resposta "{{this.correctAnswer}}" está correta.
+        <h4 v-if="this.chosenAnswer == this.correctAnswer"
+        v-html="'&#9989; Parabéns, a resposta ' + this.correctAnswer + 'está correta.'">
+          
         </h4>
-        <h4 v-else>
-          &#10060;  Que pena, a resposta está errada. A resposta correta é "{{this.correctAnswer}}".
+        <h4 v-else
+        v-html="'&#10060;  Que pena, a resposta está errada. A resposta correta é ' + this.correctAnswer +'.'">
+          
         </h4>
-      <button class="send" type="button">Próxima pergunta</button>
+      <button @click="this.getNewQuestion()" class="send" type="button">Próxima pergunta</button>
     </section>
 
     </template>
@@ -58,8 +60,23 @@ export default {
           console.log('Você errou')
         }
       }
+    },
+
+    getNewQuestion(){
+      this.answerSubmitted = false
+      this.chosenAnswer = undefined
+      this.question = undefined
+
+      this.axios
+      .get('https://opentdb.com/api.php?amount=1&category=18')
+      .then((response) => {
+        this.question = response.data.results[0].question
+        this.incorrectAnswers = response.data.results[0].incorrect_answers
+        this.correctAnswer = response.data.results[0].correct_answer
+      })
     }
   },
+
   computed: {
     answers() {
       var answers = JSON.parse(JSON.stringify(this.incorrectAnswers))
@@ -67,15 +84,11 @@ export default {
       return answers
     }
   },
+
   created(){
-    this.axios
-    .get('https://opentdb.com/api.php?amount=1&category=18')
-    .then((response) => {
-      this.question = response.data.results[0].question
-      this.incorrectAnswers = response.data.results[0].incorrect_answers
-      this.correctAnswer = response.data.results[0].correct_answer
-    })
+    this.getNewQuestion()
   }
+
 }
 
 </script>
