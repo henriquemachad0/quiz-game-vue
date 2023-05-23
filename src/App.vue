@@ -8,17 +8,16 @@
         <input 
         type="radio" 
         name="options" 
-        value="answer">
+        :value="answer"
+        v-model="this.chosen_answer">
 
         <label v-html="answer"></label><br>
       </template>
 
+      <button @click="this.submitAnswer()" class="send" type="button">Confirmar</button>
+
     </template>
 
-    
-    
-    <button class="send" type="button">Confirmar</button>
-    
   </div>
 </template>
 
@@ -26,12 +25,26 @@
 
 export default {
   name: 'App',
-  
+
   data(){
     return {
       question: undefined,
       incorrectAnswers: undefined,
-      correctAnswer: undefined
+      correctAnswer: undefined,
+      chosen_answer: undefined
+    }
+  },
+  methods:{
+    submitAnswer() {
+      if(!this.chosen_answer){
+        alert('Escolha uma das opções')
+      } else {
+        if(this.chosen_answer == this.correctAnswer){
+          alert('Você acertou')
+        } else {
+          alert('Você errou')
+        }
+      }
     }
   },
   computed: {
